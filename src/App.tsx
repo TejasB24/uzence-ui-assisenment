@@ -5,14 +5,10 @@ import DataTable from './components/DataTable';
 const App: React.FC = () => {
   const [dark, setDark] = useState(false);
   const [fruit, setFruit] = useState<string | null>('banana');
-  const isRequired = true;
-  const error = isRequired && !fruit ? 'Please select an option' : '';
+  const error = !fruit ? 'Please select an option' : '';
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (dark) root.classList.add('dark');
-    else root.classList.remove('dark');
-    return () => root.classList.remove('dark');
+    document.documentElement.classList.toggle('dark', dark);
   }, [dark]);
 
   return (
@@ -20,12 +16,7 @@ const App: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Uzence UI Assignment</h1>
         <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={dark}
-            onChange={(e) => setDark(e.target.checked)}
-            className="h-4 w-4"
-          />
+          <input type="checkbox" checked={dark} onChange={(e) => setDark(e.target.checked)} className="h-4 w-4" />
           Dark mode
         </label>
       </div>
@@ -34,7 +25,7 @@ const App: React.FC = () => {
         label="Choose option"
         value={fruit}
         onChange={setFruit}
-        required={isRequired}
+        required
         error={error}
         helperText={`Selected: ${fruit ?? 'none'}`}
         options={[

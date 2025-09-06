@@ -31,23 +31,11 @@ function cn(...classes: Array<string | false | null | undefined>): string {
 
 function compareValues(a: unknown, b: unknown): number {
   if (a == null && b == null) return 0;
-  if (a == null) return 1; // nulls last
+  if (a == null) return 1;
   if (b == null) return -1;
-
-  const typeA = typeof a;
-  const typeB = typeof b;
-
-  if (typeA === 'number' && typeB === 'number') {
-    return (a as number) - (b as number);
-  }
-  if (typeA === 'boolean' && typeB === 'boolean') {
-    return Number(a) - Number(b);
-  }
-  // Date objects
-  if (a instanceof Date && b instanceof Date) {
-    return a.getTime() - b.getTime();
-  }
-  // Fallback to string compare
+  if (typeof a === 'number' && typeof b === 'number') return a - b;
+  if (typeof a === 'boolean' && typeof b === 'boolean') return Number(a) - Number(b);
+  if (a instanceof Date && b instanceof Date) return a.getTime() - b.getTime();
   return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
 }
 
@@ -142,13 +130,13 @@ function DataTableInner<T extends Record<string, unknown>>(props: DataTableProps
   const colCount = columns.length;
 
   return (
-    <div className={cn('w-full overflow-x-auto rounded-md border border-subtle bg-surface', className)}>
+    <div className={cn('w-full overflow-x-auto rounded-md border bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700', className)}>
       <table className="w-full border-collapse text-sm">
         {caption ? (
-          <caption className="px-4 py-3 text-left text-sm text-muted-foreground">{caption}</caption>
+          <caption className="px-4 py-3 text-left text-sm text-gray-500 dark:text-gray-400">{caption}</caption>
         ) : null}
 
-        <thead className={cn(stickyHeader && 'sticky top-0 z-10', 'bg-muted-surface')}>
+        <thead className={cn(stickyHeader && 'sticky top-0 z-10', 'bg-gray-50 dark:bg-gray-800')}>
           <tr>
             {columns.map((col) => {
               const isActive = sortKey === col.key && sortDir !== null;
@@ -158,7 +146,7 @@ function DataTableInner<T extends Record<string, unknown>>(props: DataTableProps
                   scope="col"
                   aria-sort={getAriaSort(isActive ? sortDir : null)}
                   className={cn(
-                    'font-medium text-foreground',
+                    'font-medium text-gray-900 dark:text-gray-100',
                     densityCellPadding(density),
                     densityRowHeight(density),
                     cellAlignClass(col.align),
@@ -192,7 +180,7 @@ function DataTableInner<T extends Record<string, unknown>>(props: DataTableProps
         <tbody className={cn(zebra && 'divide-y divide-gray-100 dark:divide-gray-800')}>
           {sortedData.length === 0 ? (
             <tr>
-              <td colSpan={colCount} className={cn('text-center text-muted-foreground', densityCellPadding(density), densityRowHeight(density))}>
+              <td colSpan={colCount} className={cn('text-center text-gray-500 dark:text-gray-400', densityCellPadding(density), densityRowHeight(density))}>
                 {emptyMessage}
               </td>
             </tr>
@@ -213,7 +201,7 @@ function DataTableInner<T extends Record<string, unknown>>(props: DataTableProps
                     return (
                       <td
                         key={String(col.key)}
-                        className={cn('text-foreground', densityCellPadding(density), densityRowHeight(density), cellAlignClass(col.align))}
+                        className={cn('text-gray-900 dark:text-gray-100', densityCellPadding(density), densityRowHeight(density), cellAlignClass(col.align))}
                       >
                         {col.render ? col.render(value, row) : String(value ?? '')}
                       </td>
