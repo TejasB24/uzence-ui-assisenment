@@ -1,38 +1,64 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SmartSelect from './components/SmartSelect';
 import DataTable from './components/DataTable';
 
 const App: React.FC = () => {
-	const [fruit, setFruit] = useState<string | null>('banana');
+  const [dark, setDark] = useState(false);
+  const [fruit, setFruit] = useState<string | null>('banana');
+  const isRequired = true;
+  const error = isRequired && !fruit ? 'Please select an option' : '';
 
-	return (
-		<div className="p-6 space-y-8">
-			<h1 className="text-2xl font-bold">Uzence UI Assignment</h1>
+  useEffect(() => {
+    const root = document.documentElement;
+    if (dark) root.classList.add('dark');
+    else root.classList.remove('dark');
+    return () => root.classList.remove('dark');
+  }, [dark]);
 
-			<SmartSelect
-				label="Choose option"
-				value={fruit}
-				onChange={setFruit}
-				helperText={`Selected: ${fruit ?? 'none'}`}
-				options={[
-					{ value: 'apple', label: 'Apple' },
-					{ value: 'banana', label: 'Banana' },
-					{ value: 'cherry', label: 'Cherry' },
-				]}
-			/>
+  return (
+    <div className="p-6 space-y-8">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Uzence UI Assignment</h1>
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={dark}
+            onChange={(e) => setDark(e.target.checked)}
+            className="h-4 w-4"
+          />
+          Dark mode
+        </label>
+      </div>
 
-			<DataTable
-				columns={[{ key: 'name', label: 'Name', sortable: true }, { key: 'age', label: 'Age', sortable: true }]}
-				data={[
-					{ name: 'Alice', age: 25 },
-					{ name: 'Bob', age: 30 },
-					{ name: 'Charlie', age: 35 },
-				]}
-				caption="Simple sortable table"
-				initialSort={{ key: 'name', direction: 'asc' }}
-			/>
-		</div>
-	);
+      <SmartSelect
+        label="Choose option"
+        value={fruit}
+        onChange={setFruit}
+        required={isRequired}
+        error={error}
+        helperText={`Selected: ${fruit ?? 'none'}`}
+        options={[
+          { value: 'apple', label: 'Apple' },
+          { value: 'banana', label: 'Banana' },
+          { value: 'cherry', label: 'Cherry' },
+        ]}
+      />
+
+      <DataTable
+        caption="Simple sortable table"
+        columns={[
+          { key: 'name', label: 'Name', sortable: true },
+          { key: 'age', label: 'Age', sortable: true, align: 'right' },
+        ]}
+        data={[
+          { name: 'Alice', age: 25 },
+          { name: 'Bob', age: 30 },
+          { name: 'Charlie', age: 35 },
+        ]}
+        initialSort={{ key: 'name', direction: 'asc' }}
+      />
+    </div>
+  );
 };
 
 export default App;
